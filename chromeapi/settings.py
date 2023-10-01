@@ -129,7 +129,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
-RABBITMQ_HOST = 'localhost'  # RabbitMQ server hostname or IP address
-RABBITMQ_PORT = 5672  # Default RabbitMQ port
-RABBITMQ_QUEUE_NAME = 'video_transcription'
