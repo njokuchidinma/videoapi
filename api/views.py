@@ -1,7 +1,6 @@
 import os
 import assemblyai as aai
 import requests
-import json
 import time
 from moviepy.editor import VideoFileClip
 from django.conf import settings
@@ -48,7 +47,7 @@ class VideoTranscription(APIView):
         try:
             audio_dir = os.path.join(settings.MEDIA_ROOT, 'audios')
             os.makedirs(audio_dir, exist_ok=True)
-            
+
             audio_filename = f"{video_id}_audio.wav"
             audio_path = os.path.join(audio_dir, audio_filename)
 
