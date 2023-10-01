@@ -1,0 +1,122 @@
+for views.py
+
+#class VideoTranscription(APIView):
+#     def get(self, request, pk, format=None):
+#         video = get_object_or_404(Video, pk=pk)
+#         video_path = os.path.join(settings.MEDIA_ROOT, str(video.upload_video))
+
+#         if not os.path.isfile(video_path):
+#             return Response({"error": "Video not found"}, status=status.HTTP_404_NOT_FOUND)
+
+#         try:
+#             # Convert video to audio
+#             video_audio = AudioSegment.from_file(video_path, format="mp4")
+#             audio = video_audio.set_channels(1).set_frame_rate(16000).set_sample_width(2)
+#             audio.export("audio.wav", format="wav")
+
+#             # Initialize recognizer class (for recognizing the speech)
+#             r = sr.Recognizer()
+
+#             # Open the audio file
+#             with sr.AudioFile("audio.wav") as source:
+#                 audio_text = r.record(source)
+
+#             # Recognize the speech in the audio
+#             transcription_result = r.recognize_google(audio_text, language='en-US')
+
+#             if transcription_result:
+#                 video.transcription = transcription_result
+#                 video.save()
+
+#                 serializer = TranscriptionSerializer(video)
+#                 return Response(serializer.data)
+#             else:
+#                 return Response({"error": "Transcription failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#         except Exception as e:
+#             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+# class VideoTranscription(APIView):
+#     def get(self, request, pk, body, format=None):
+#         video = get_object_or_404(Video, pk=pk)
+#         video_path = os.path.join(settings.MEDIA_ROOT, str(video.upload_video))
+
+#         if not os.path.isfile(video_path):
+#             return Response({"error": "Video not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+#         try:
+#             video_id = int(body)
+#             video = Video.objects.get(pk=video_id)
+
+
+            
+
+#             # Convert video to audio (similar to previous code)
+#             # ...
+
+#             # Initialize recognizer class and perform transcription (similar to previous code)
+#             transcription_result = r.recognize_google(audio_text, language='en-US')
+
+
+#             if transcription_result:
+#                 # Save the transcription to the video object
+#                 video.transcription = transcription_result
+#                 video.save()
+
+#         except Exception as e:
+#             print(f"Error processing video ID {body}: {str(e)}")
+
+#     # Establish a connection to RabbitMQ server
+#     connection = pika.BlockingConnection(
+#         pika.ConnectionParameters(host=settings.RABBITMQ_HOST, port=settings.RABBITMQ_PORT)
+#     )
+#     channel = connection.channel()
+
+#     # Declare the same queue as the producer
+#     channel.queue_declare(queue=settings.RABBITMQ_QUEUE_NAME)
+
+#     # Set up the consumer to process incoming tasks
+#     channel.basic_consume(
+#         queue=settings.RABBITMQ_QUEUE_NAME,
+#         on_message_callback=callback,
+#         auto_ack=True,
+#     )
+
+#     print('Waiting for video transcription tasks...')
+#     channel.start_consuming()
+
+
+for rabbitmq.py
+
+import pika
+
+# class RabbitMQClient:
+#     def __init__(self):
+#         self.connection = pika.BlockingConnection(
+#             pika.ConnectionParameters('localhost')  # Replace with your RabbitMQ server's address
+#         )
+#         self.channel = self.connection.channel()
+
+#     def send_message(self, message, queue_name):
+#         self.channel.queue_declare(queue=queue_name)
+#         self.channel.basic_publish(exchange='', routing_key=queue_name, body=message)
+
+#     def close(self):
+#         self.connection.close()
+
+
+for trans_Worker.py
+
+import pika
+
+def transcribe_video(ch, method, properties, body):
+    # Transcribe the video here and send back the result
+    result = "Transcription result for video: " + body.decode()
+    print(result)
+
+connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+channel = connection.channel()
+channel.queue_declare(queue='video_transcription_queue')
+channel.basic_consume(queue='video_transcription_queue', on_message_callback=transcribe_video, auto_ack=True)
+print("Transcription worker is waiting for messages.")
+channel.start_consuming()
