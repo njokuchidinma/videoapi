@@ -120,3 +120,9 @@ channel.queue_declare(queue='video_transcription_queue')
 channel.basic_consume(queue='video_transcription_queue', on_message_callback=transcribe_video, auto_ack=True)
 print("Transcription worker is waiting for messages.")
 channel.start_consuming()
+
+imports for views.py
+
+import pika
+import speech_recognition as sr
+from pydub import AudioSegment

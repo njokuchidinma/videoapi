@@ -21,5 +21,5 @@ from . import views
 urlpatterns = [
     path('api/upload/', views.VideoUploadAPIView.as_view(), name='video_upload'),
     path('api/playback/<int:video_id>/', views.VideoPlaybackAPIView.as_view(), name='video_playback'),
-    path('api/transcription/<int:pk>/', views.VideoTranscription.as_view(), name='video-transcription'),
+    path('api/transcription/<int:video_id>/', views.VideoTranscription.as_view(), name='video-transcription'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
