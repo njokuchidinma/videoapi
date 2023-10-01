@@ -18,8 +18,8 @@ RUN pip install requests
 
 # RUN pip install -r /app/requirements.txt
 # RUN python manage.py makemigrations 
-RUN python /app/manage.py migrate
-RUN python /app/manage.py collectstatic
+RUN python manage.py migrate
+RUN python manage.py collectstatic
 
 # COPY ./entrypoint.sh /app/entrypoint.sh
 
