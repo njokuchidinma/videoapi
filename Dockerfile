@@ -17,7 +17,7 @@ RUN pip install moviepy
 RUN pip install requests
 
 # RUN pip install -r /app/requirements.txt
-# RUN python manage.py makemigrations 
+RUN python manage.py makemigrations 
 RUN python manage.py migrate
 RUN python manage.py collectstatic
 
