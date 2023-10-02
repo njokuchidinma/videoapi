@@ -25,7 +25,7 @@ RUN python manage.py collectstatic
 
 EXPOSE 8000
 
-
+ENTRYPOINT [".../entrypoint.sh"]
 # ENTRYPOINT ["sh", "/app/entrypoint.sh"]
 
 CMD ["gunicorn", "--bind", ":8000", "--timeout", "600", "--workers", "1", "chromeapi.wsgi:application"]
