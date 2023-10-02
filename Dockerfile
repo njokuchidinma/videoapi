@@ -21,11 +21,12 @@ RUN pip install requests
 # RUN python manage.py migrate
 RUN python manage.py collectstatic
 
-COPY ./entrypoint.sh 
+
+COPY entrypoint.sh /app/entrypoint.sh
 
 EXPOSE 8000
 
-ENTRYPOINT [".../entrypoint.sh"]
-# ENTRYPOINT ["sh", "/app/entrypoint.sh"]
+
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 CMD ["gunicorn", "--bind", ":8000", "--timeout", "600", "--workers", "1", "chromeapi.wsgi:application"]
