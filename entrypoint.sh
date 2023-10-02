@@ -1,4 +1,4 @@
-python manage.py makemigrations 
+# python manage.py makemigrations 
 python manage.py migrate
 # python /app/manage.py collectstatic --no-input
 
