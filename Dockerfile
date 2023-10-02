@@ -21,7 +21,7 @@ RUN pip install requests
 # RUN python manage.py migrate
 RUN python manage.py collectstatic
 
-# COPY ./entrypoint.sh /app/entrypoint.sh
+COPY ./entrypoint.sh 
 
 EXPOSE 8000
 
