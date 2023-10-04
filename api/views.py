@@ -1,5 +1,5 @@
 import os
-import assemblyai as aai
+# import assemblyai as aai
 import requests
 import time
 from moviepy.editor import VideoFileClip
@@ -14,9 +14,32 @@ from rest_framework import generics
 
 
 
-class VideoUploadAPIView(generics.ListCreateAPIView):
+# class VideoUploadAPIView(generics.ListCreateAPIView):
+#     serializer_class = UploadSerializer
+#     queryset = Video.objects.all()
+
+class VideoUploadAPIView(APIView):
     serializer_class = UploadSerializer
-    queryset = Video.objects.all()
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            video_file = serializer.validated_data['upload_video']
+            
+            # Generate a unique file name for the uploaded video
+            video_name = video_file.name  # You can change this to generate a unique name
+            video_path = os.path.join(settings.MEDIA_ROOT, 'videos', video_name)
+
+            # Save the video file to disk
+            with open(video_path, 'wb') as destination:
+                for chunk in video_file.chunks():
+                    destination.write(chunk)
+
+            video_file = serializer.save()
+            
+            return Response({"message": "Video uploaded successfully"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class VideoPlaybackAPIView(APIView):
