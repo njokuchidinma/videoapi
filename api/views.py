@@ -1,5 +1,9 @@
 import os
-# import assemblyai as aai
+import mimetypes
+from wsgiref.util import FileWrapper
+from django.http import HttpResponse
+from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser# import assemblyai as aai
 import requests
 import time
 from moviepy.editor import VideoFileClip
@@ -18,27 +22,66 @@ from rest_framework import generics
 #     serializer_class = UploadSerializer
 #     queryset = Video.objects.all()
 
-class VideoUploadAPIView(APIView):
-    serializer_class = UploadSerializer
+# class VideoUploadAPIView(APIView):
+#     serializer_class = UploadSerializer
 
+#     def post(self, request, format=None):
+#         serializer = self.serializer_class(data=request.data)
+#         if serializer.is_valid():
+#             video_file = serializer.validated_data['upload_video']
+            
+#             # Generate a unique file name for the uploaded video
+#             video_name = video_file.name  # You can change this to generate a unique name
+#             video_path = os.path.join(settings.MEDIA_ROOT, 'videos', video_name)
+
+            
+#             # Save the video file to disk
+#             with open(video_path, 'wb') as destination:
+#                 for chunk in video_file.chunks():
+#                     destination.write(chunk)
+
+#             video_file = serializer.save()
+            
+#             return Response({"message": "Video uploaded successfully"}, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class VideoUploadAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
+        serializer = UploadSerializer(data=request.data)
+        
         if serializer.is_valid():
             video_file = serializer.validated_data['upload_video']
-            
-            # Generate a unique file name for the uploaded video
-            video_name = video_file.name  # You can change this to generate a unique name
-            video_path = os.path.join(settings.MEDIA_ROOT, 'videos', video_name)
+
+            # Set the content type for streaming video
+            content_type, encoding = mimetypes.guess_type(video_file.name)
+            response = HttpResponse(self.stream_video(video_file), content_type=content_type)
+            response['Content-Disposition'] = f'inline; filename="{os.path.basename(video_file.name)}"'
 
             # Save the video file to disk
+            video_name = os.path.basename(video_file.name)
+            video_path = os.path.join(settings.MEDIA_ROOT, 'videos', video_name)
+
             with open(video_path, 'wb') as destination:
                 for chunk in video_file.chunks():
                     destination.write(chunk)
 
-            video_file = serializer.save()
-            
-            return Response({"message": "Video uploaded successfully"}, status=status.HTTP_201_CREATED)
+            return response
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def stream_video(self, video_file):
+        # Implement logic to read and stream the video in chunks
+        # You can adjust the chunk size as needed
+        chunk_size = 8192
+
+        with video_file.open('rb') as video:
+            while True:
+                data = video.read(chunk_size)
+                if not data:
+                    break
+                yield data
 
 
 
