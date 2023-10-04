@@ -72,8 +72,6 @@ class VideoUploadAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def stream_video(self, video_file):
-        # Implement logic to read and stream the video in chunks
-        # You can adjust the chunk size as needed
         chunk_size = 8192
 
         with video_file.open('rb') as video:
